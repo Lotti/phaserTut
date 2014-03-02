@@ -1,77 +1,116 @@
-/*
-preload
-This function is called first. It should contain code to handle the loading of assets needed by your game. I.e. game.load.image(), etc. Note: while 'preload' is running the game doesn't call the update or render functions, instead it calls 2 special functions (if they exist): loadUpdate and loadRender.
-You don't have to put just loader specific code in the preload function. You could also do things like set the stage background color or scale modes. However to keep it clean and logical I would suggest you do limit it to just loading assets.
-Note that you don't need to tell Phaser to start the load, it happens automatically.
-
-loadUpdate
-This is a special-case function that is only called while assets are preloading (as the standard update function is not). You could use it to do something like update a progress bar.
-
-loadRender
-Most likely not needed (especially not for WebGL games) but this is an optional special-case function that is called after update and should contain render specific code.
-
-create
-The create function is called automatically once the preload has finished. Equally if you don't actually load any assets at all or don't have a preload function then create is the first function called by Phaser. In here you can safely create sprites, particles and anything else you need that may use assets the preload will now have loaded for you. Typically this function would contain the bulk of your set-up code, creating game objects and the like.
-
-update
-The update (and render) functions are called every frame. So on a desktop that'd be around 60 time per second. In update this is where you'd do things like poll for input to move a player, check for object collision, etc. It's the heart of your game really.
-
-render
-The render function is called AFTER the WebGL/canvas render has taken place, so consider it the place to apply post-render effects or extra debug overlays. For example when building a game I will often put the game into CANVAS mode only and then use the render function to draw lots of debug info over the top of my game.
-Once render has completed the frame is over and it returns to update again.
-Note that you cannot use any of the above function names in your game other than for the use they were intended above. What I mean by that is you should consider them as being 'reserved' as game system only functions.
-*/
-
-var colors = [ 'yellow', 'red', 'green', 'blue', 'purple', 'gray' ];
-
+var collides = false;
+var debug = true;
 var gameDiv = "game";
-var game = new Phaser.Game($("#"+gameDiv).width(), $("#"+gameDiv).height(), Phaser.AUTO, gameDiv, { preload: preload, loadUpdate: loadUpdate, loadRender: loadRender, create: create/*, update: update, render: render*/ });
+var game = new Phaser.Game($("#"+gameDiv).width(), $("#"+gameDiv).height(), debug ? Phaser.CANVAS : Phaser.AUTO, gameDiv, { preload: preload, loadUpdate: loadUpdate, loadRender: loadRender, create: create, update: update, render: render });
 
-function preload() {
-    game.load.image('circle', 'assets/sprites/circle.png');
-    for(var i in colors) {
-        game.load.image(colors[i]+'Dot', 'assets/sprites/'+colors[i]+'Dot.png');
-    }
-}
+	function preload() {
+		game.load.image('circle', 'assets/sprites/circle.png');
+		for(var i in colors) {
+			game.load.image(colors[i]+'Dot', 'assets/sprites/'+colors[i]+'Dot.png');
+		}
+	}
 
-function loadUpdate() {
-    //console.log("loadUpdate");
-}
+	function loadUpdate() {
+		//console.log("loadUpdate");
+	}
 
-function loadRender() {
-    //console.log("loadRender");
-}
+	function loadRender() {
+		//console.log("loadRender");
+	}
 
-function create() {
-    //  A simple background for our game
-    game.add.sprite(0, 0, 'circle');
- 
-    //  The platforms group contains the ground and the 2 ledges we can jump on
-    platforms = game.add.group();
- 
-    // Here we create the ground.
-    var ground = platforms.create(0, game.world.height - 64, 'yellowDot');
- 
-    //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-    ground.scale.setTo(2, 2);
- 
-    //  This stops it from falling away when you jump on it
-    ground.body.immovable = true;
- 
-    //  Now let's create two ledges
-    var ledge = platforms.create(400, 400, 'redDot');
-    ledge.body.immovable = true;
- 
-    ledge = platforms.create(-150, 250, 'grayDot');
-    ledge.body.immovable = true;
-}
+	var colors = [ 'yellow', 'red', 'green', 'blue', 'purple', 'grey' ];
+	var dots;
+	var dotCG;
+	var circle;
+	var circleCG;
+	var circleMaterial;
+	var dotMaterial;
+	var fps;
+	
+	function create() {
+		if (debug) {
+			game.time.advancedTiming = true;
+			fps = game.add.text(2.5, game.world.height, game.time.fps+" fps", { font: "10px Arial", fill: "#FFFFFF", align: "left" });
+			fps.pivot.x = 0;
+			fps.pivot.y = fps.height;
+			fps.update = function () {
+				fps.setText(game.time.fps+" fps");
+			}
+		}
+		
+        game.physics.gravity.y = 200;
+        game.physics.restitution = 0.6;
+        game.physics.friction = 0.8;		
+		
+		circleMaterial = game.physics.createMaterial('circleMaterial');
+		circleCG = game.physics.createCollisionGroup();
 
-/*
-function update() {
-    console.log("update");
-}
+		circle = game.add.sprite(100, 15, 'circle');
+		circle.name = 'circle';
+		circle.anchor.setTo(0.5,0.5);
+		circle.scale.setTo(0.3,0.3);
+		circle.physicsEnabled = true;
+		circle.body.setMaterial(circleMaterial);
+		circle.body.setCollisionGroup(circleCG);
+		circle.body.setCircle(circle.width * .5);
+		circle.body.mass = 4;
+		circle.body.damping = 0.2; //bounce?
+		circle.body.collideWorldBounds = true;
+		
+		dotMaterial = game.physics.createMaterial('dotMaterial');
+		dotCG = game.physics.createCollisionGroup();		
 
-function render() {
-    console.log("render");
-}
-*/
+		var rows = 10;
+		var cols = 20;
+		var startX = 25;
+		var startY = 100;
+		dots = game.add.group();
+		dots.name = 'dots';
+		for(var i=0; i<cols; i++) {
+			for(var j=0; j<rows; j++) {
+				if (j%2==0) {
+					offsetX = startX;
+				}
+				else {
+					offsetX = 9.6*.5;
+				}
+
+				var dot = dots.create(i*32+offsetX, j*32+startY, colors[game.rnd.integerInRange(0,colors.length-1)]+'Dot');
+				dot.name = ((j+1)*i)+"dot";
+				dot.anchor.setTo(0.5,0.5);
+				dot.scale.setTo(0.3,0.3);
+				dot.physicsEnabled = true;
+				dot.body.setMaterial(dotMaterial);
+				dot.body.setCollisionGroup(dotCG);				
+				dot.body.static = true;
+				dot.body.setCircle(dot.width * .5);
+				if (collides) {
+					dot.body.collides([circleCG], function() {console.log("dot collided");});
+				}
+			}
+		}
+		
+		game.physics.createContactMaterial(circleMaterial, dotMaterial, { friction: 0.04, restitution: 0.6 });
+		if (collides) {
+			circle.body.collides([dotCG], function() {console.log("circle collided");});
+		}
+	}
+
+	function update() {
+		if (circle.body.static) {
+			circle.body.x = game.input.activePointer.worldX;
+		}
+		
+		if (game.input.activePointer.isDown) {
+			circle.body.static = false;
+		}
+	}
+
+	function render() {
+		if (debug) {		
+			game.debug.renderPhysicsBody(circle.body);
+			dots.forEach(function(dot) {
+				game.debug.renderPhysicsBody(dot.body);
+			});
+		}
+	}
