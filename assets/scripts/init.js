@@ -1,4 +1,3 @@
-var collides = false;
 var debug = true;
 var gameDiv = "game";
 var game = new Phaser.Game($("#"+gameDiv).width(), $("#"+gameDiv).height(), debug ? Phaser.CANVAS : Phaser.AUTO, gameDiv, { preload: preload, loadUpdate: loadUpdate, loadRender: loadRender, create: create, update: update, render: render });
@@ -28,7 +27,7 @@ var game = new Phaser.Game($("#"+gameDiv).width(), $("#"+gameDiv).height(), debu
 	var fps;
 	
 	function create() {
-		if (debug) {
+		//if (debug) {
 			game.time.advancedTiming = true;
 			fps = game.add.text(2.5, game.world.height, game.time.fps+" fps", { font: "10px Arial", fill: "#FFFFFF", align: "left" });
 			fps.pivot.x = 0;
@@ -36,7 +35,7 @@ var game = new Phaser.Game($("#"+gameDiv).width(), $("#"+gameDiv).height(), debu
 			fps.update = function () {
 				fps.setText(game.time.fps+" fps");
 			}
-		}
+		//}
 		
         game.physics.gravity.y = 200;
         game.physics.restitution = 0.6;
@@ -50,11 +49,12 @@ var game = new Phaser.Game($("#"+gameDiv).width(), $("#"+gameDiv).height(), debu
 		circle.anchor.setTo(0.5,0.5);
 		circle.scale.setTo(0.3,0.3);
 		circle.physicsEnabled = true;
-		circle.body.setMaterial(circleMaterial);
-		circle.body.setCollisionGroup(circleCG);
 		circle.body.setCircle(circle.width * .5);
 		circle.body.mass = 4;
 		circle.body.damping = 0.2; //bounce?
+        circle.body.setMaterial(circleMaterial);
+		circle.body.setCollisionGroup(circleCG);
+	  	//circle.body.static = true;
 		circle.body.collideWorldBounds = true;
 		
 		dotMaterial = game.physics.createMaterial('dotMaterial');
@@ -80,22 +80,19 @@ var game = new Phaser.Game($("#"+gameDiv).width(), $("#"+gameDiv).height(), debu
 				dot.anchor.setTo(0.5,0.5);
 				dot.scale.setTo(0.3,0.3);
 				dot.physicsEnabled = true;
-				dot.body.setMaterial(dotMaterial);
+				dot.body.setCircle(dot.width * .5);
+                dot.body.setMaterial(dotMaterial);
 				dot.body.setCollisionGroup(dotCG);				
 				dot.body.static = true;
-				dot.body.setCircle(dot.width * .5);
-				if (collides) {
-					dot.body.collides([circleCG], function() {console.log("dot collided");});
-				}
+				dot.body.collides(circleCG); //now it works!
 			}
 		}
 		
 		game.physics.createContactMaterial(circleMaterial, dotMaterial, { friction: 0.04, restitution: 0.6 });
-		if (collides) {
-			circle.body.collides([dotCG], function() {console.log("circle collided");});
-		}
+		circle.body.collides([dotCG], function() {console.log("circle collided");}); //now it works!
 	}
 
+	var started = false;
 	function update() {
 		if (circle.body.static) {
 			circle.body.x = game.input.activePointer.worldX;
