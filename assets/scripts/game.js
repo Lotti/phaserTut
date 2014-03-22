@@ -56,18 +56,18 @@ function create() {
 	
 	game.physics.startSystem(Phaser.Physics.P2JS);
 	
-	game.physics.p2.gravity.y = 100;
-	game.physics.p2.defaultRestitution = 0.8;
-	game.physics.p2.defaultFriction = 0.8;		
+	game.physics.p2.gravity.y = 200;
+	game.physics.p2.defaultRestitution = 1;
+	game.physics.p2.defaultFriction = 1;		
 
 	//circle
 	circleCG = game.physics.p2.createCollisionGroup();
 	
-	circle = game.add.sprite(150, 30, 'circle');
+	circle = game.add.sprite(300, 20, 'circle');
 	circle.collidedWith = [];
 	circle.name = 'circle';
 	circle.anchor.setTo(0.5,0.5);
-	circle.scale.setTo(0.5,0.5);
+	circle.scale.setTo(0.3,0.3);
 	game.physics.p2.enable(circle, debug);
 	circle.body.data.gravityScale = 1;
 	circle.body.setCircle(circle.width * .5);
@@ -76,20 +76,17 @@ function create() {
 	circle.body.setCollisionGroup(circleCG);
 	circle.body.data.motionState = 2; //circle.body.static = true;
 	circle.body.collideWorldBounds = true;
-
-	//circle.body.setZeroDamping();
-	//circle.body.fixedRotation = true;	
-
 	
 	//dots
 	dotCG = game.physics.p2.createCollisionGroup();		
 
-	var rows = 7;
-	var cols = 20;
-	var startX = 50;
-	var startY = 70;
-	var spaceX = 85;
-	var spaceY = 85;
+	var rows = 11;
+	var cols = 21;
+	var startX = -1;
+	var startX2 = 29;
+	var startY = 90;
+	var spaceX = 50;
+	var spaceY = 45;
 	dots = game.add.group();
 	dots.name = 'dots';
 	for(var i=0; i<cols; i++) {
@@ -98,7 +95,7 @@ function create() {
 				offsetX = startX;
 			}
 			else {
-				offsetX = 10;
+				offsetX = spaceX*0.5;
 			}
 
 			var dot = dots.create(i*spaceX+offsetX, j*spaceY+startY, colors[game.rnd.integerInRange(0,colors.length-1)]+'Dot');
@@ -131,8 +128,8 @@ function create() {
 	});
 	
 	//baskets
-	startX = 3;
-	startY = game.world.height - 70;
+	startX = 50;
+	startY = game.world.height-35;
 	spaceX = 92.5;
 	var basketNumber = 11;
 	
@@ -147,13 +144,7 @@ function create() {
 		basket.scale.setTo(0.75,0.75);
 		game.physics.p2.enable(basket, debug);
 		basket.body.clearShapes();
-		//basket.body.addPolygon({optimalDecomp: false, skipSimpleCheck: true, removeCollinearPoints: false}, [[0,5], [92,5], [82,70], [8,70]]);
-		
-		basket.body.addPolygon({optimalDecomp: false, skipSimpleCheck: true, removeCollinearPoints: false}, 
-		   [
-			   [0,0], [1,0], [15,60], [77,60], [91,0], [92,0], [82,70], [8,70]
-		   ]);
-		
+		basket.body.loadPolygon('physicsBasket','scaledBasket');
 		basket.body.mass = 100;
 		basket.body.setCollisionGroup(basketCG);
 		basket.body.data.motionState = 2; //basket.body.static = true;
@@ -161,15 +152,18 @@ function create() {
 	}
 	
 	circle.body.collides(basketCG, function(circleBody, otherBody) {
-		switch(otherBody.sprite.key) {
-			case 'basketgreen':
-				console.log("green");
-				points.p=parseInt(points.p)*1.5;
-			break;				
-			case 'basketred':
-				console.log("red");
-				points.p=parseInt(points.p)*0.5;
-			break;				
+		if (circle.collidedWith.indexOf(otherBody) == -1) {
+			circle.collidedWith.push(otherBody);
+			switch(otherBody.sprite.key) {
+				case 'basketgreen':
+					console.log("green");
+					points.p=Math.round(parseInt(points.p)*1.5);
+				break;				
+				case 'basketred':
+					console.log("red");
+					points.p=Math.round(parseInt(points.p)*0.5);
+				break;				
+			}
 		}
 	});
 	
