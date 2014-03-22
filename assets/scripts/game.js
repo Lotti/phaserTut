@@ -1,4 +1,4 @@
-var debug = true;
+var debug = false;
 var gameDiv = "game";
 var basketColors = ['basket','basketgreen','basketred'];
 var colors = ['yellow','red','green','blue','purple','grey'];
@@ -34,14 +34,13 @@ function loadRender() {
 }
 
 function create() {	
-	//if (debug) {
+	if (debug) {
 		game.time.advancedTiming = true;
 		fps = game.add.text(2.5, 2.5, '', { font: '30px Verdana', fill: '#FFFFFF', align: 'left' });
 		fps.update = function () {
 			fps.setText(game.time.fps+' fps');
 		}
-	//}
-	
+	}
 	
 	game.time.advancedTiming = true;
 	points = game.add.text(game.world.width-5, 2.5, '0 points', { font: '30px Verdana', fill: '#FFFFFF', align: 'left' });
