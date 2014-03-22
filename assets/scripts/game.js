@@ -53,14 +53,10 @@ function create() {
 		points.pivot.y = 0;		
 		points.setText(points.p+' points');
 	}		
-
-	cursors = game.input.keyboard.createCursorKeys();
 	
 	game.physics.startSystem(Phaser.Physics.P2JS);
-	
+	game.physics.p2.setImpactEvents(true); //Turn on impact events for the world, without this we get no collision callbacks
 	game.physics.p2.gravity.y = 200;
-	game.physics.p2.defaultRestitution = 1;
-	game.physics.p2.defaultFriction = 1;		
 
 	//circle
 	circleCG = game.physics.p2.createCollisionGroup();
@@ -78,13 +74,7 @@ function create() {
 	circle.body.setCollisionGroup(circleCG);
 	circle.body.data.motionState = 2; //circle.body.static = true;
 	circle.body.collideWorldBounds = true;
-	
-	circle.inputEnabled = true;
-	circle.events.onInputDown.add(function() {
-		circle.inputEnabled = false;
-		circle.body.data.motionState = 1;	
-	}, this);
-	
+		
 	//dots
 	dotCG = game.physics.p2.createCollisionGroup();		
 
@@ -164,11 +154,9 @@ function create() {
 			circle.collidedWith.push(otherBody);
 			switch(otherBody.sprite.key) {
 				case 'basketgreen':
-					console.log("green");
 					points.p=Math.round(parseInt(points.p)*1.5);
 				break;				
 				case 'basketred':
-					console.log("red");
 					points.p=Math.round(parseInt(points.p)*0.5);
 				break;				
 			}
@@ -178,22 +166,37 @@ function create() {
     //  This part is vital if you want the objects with their own collision groups to still collide with the world bounds
     //  (which we do) - what this does is adjust the bounds to use its own collision group.
     game.physics.p2.updateBoundsCollisionGroup();	
-	
-	//Turn on impact events for the world, without this we get no collision callbacks
-	game.physics.p2.setImpactEvents(true);	
 }
 
+var press = false;
 function update() {
 	var speed = 7.5;
-	
-	if (game.input.keyboard.isDown(Phaser.Keyboard.CONTROL)) {
-		circle.inputEnabled = false;
-		circle.body.data.motionState = 1;
-	}
+	var circlePressed = false;
 	
 	if (circle.body.data.motionState == 2) {
-		if (game.input.mousePointer.isDown) {
-			circle.body.x = game.input.activePointer.worldX;
+		if (game.input.activePointer.isUp) {
+			circlePressed = false;
+			press = false;
+		}		
+		else if (game.input.activePointer.isDown) {
+			if (!press && game.input.activePointer.positionDown.x > circle.position.x-circle.width*.5 
+				&& game.input.activePointer.positionDown.x < circle.position.x+circle.width*.5
+			  	&& game.input.activePointer.positionDown.y > circle.position.y-circle.height*.5
+				&& game.input.activePointer.positionDown.y > circle.position.y-circle.height*.5) {
+				circlePressed = true;
+			}
+			
+			press = true;
+			
+			if (circlePressed) {
+				circle.body.data.motionState = 1;
+			}
+			else {
+				circle.body.x = game.input.activePointer.worldX;
+			}
+		}
+		else if (game.input.keyboard.isDown(Phaser.Keyboard.CONTROL)) {
+			circle.body.data.motionState = 1;
 		}
 		else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
 			circle.body.x-= speed;
@@ -201,7 +204,7 @@ function update() {
 		else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
 			circle.body.x+= speed;
 		}
-		
+				
 		if (circle.body.x < 0 + circle.width * 0.5) {
 			circle.body.x = circle.width * 0.5;
 		} 
