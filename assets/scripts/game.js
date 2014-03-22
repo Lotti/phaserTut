@@ -12,7 +12,7 @@ var fps;
 var points;
 var started = false;
 
-var game = new Phaser.Game($("#"+gameDiv).width(), $("#"+gameDiv).height(), debug ? Phaser.CANVAS : Phaser.AUTO, gameDiv, { preload: preload, loadUpdate: loadUpdate, loadRender: loadRender, create: create, update: update, render: render });
+var game = new Phaser.Game(1024, 668, debug ? Phaser.CANVAS : Phaser.AUTO, '', { preload: preload, loadUpdate: loadUpdate, loadRender: loadRender, create: create, update: update, render: render });
 
 function preload() {
 	game.load.image('circle', 'assets/sprites/cd.png');	
@@ -33,7 +33,7 @@ function loadRender() {
 	//console.log("loadRender");
 }
 
-function create() {	
+function create() {		
 	if (debug) {
 		game.time.advancedTiming = true;
 		fps = game.add.text(2.5, 2.5, '', { font: '30px Verdana', fill: '#FFFFFF', align: 'left' });
