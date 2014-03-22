@@ -12,7 +12,10 @@ var fps;
 var points;
 var started = false;
 
-var game = new Phaser.Game(1024, 668, debug ? Phaser.CANVAS : Phaser.AUTO, '', { preload: preload, loadUpdate: loadUpdate, loadRender: loadRender, create: create, update: update, render: render });
+var gameWidth = parseInt(document.getElementById("game").offsetWidth);
+var gameHeight = parseInt(document.getElementById("game").offsetHeight);
+
+var game = new Phaser.Game(gameWidth, gameHeight, debug ? Phaser.CANVAS : Phaser.AUTO, 'game', { preload: preload, loadUpdate: loadUpdate, loadRender: loadRender, create: create, update: update, render: render });
 
 function preload() {
 	game.load.image('circle', 'assets/sprites/cd.png');	
@@ -75,6 +78,12 @@ function create() {
 	circle.body.setCollisionGroup(circleCG);
 	circle.body.data.motionState = 2; //circle.body.static = true;
 	circle.body.collideWorldBounds = true;
+	
+	circle.inputEnabled = true;
+	circle.events.onInputDown.add(function() {
+		circle.inputEnabled = false;
+		circle.body.data.motionState = 1;	
+	}, this);
 	
 	//dots
 	dotCG = game.physics.p2.createCollisionGroup();		
@@ -178,11 +187,15 @@ function update() {
 	var speed = 7.5;
 	
 	if (game.input.keyboard.isDown(Phaser.Keyboard.CONTROL)) {
+		circle.inputEnabled = false;
 		circle.body.data.motionState = 1;
 	}
 	
 	if (circle.body.data.motionState == 2) {
-		if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+		if (game.input.mousePointer.isDown) {
+			circle.body.x = game.input.activePointer.worldX;
+		}
+		else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
 			circle.body.x-= speed;
 		}
 		else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
