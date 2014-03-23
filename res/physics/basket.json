@@ -75,17 +75,17 @@
 				{
 					"density": 2, "friction": 0, "bounce": 0, 
 					"filter": { "categoryBits": 1, "maskBits": 65535 },
-					"shape": [   15, 62  ,  13, 65  ,  8, 28  ,  7, 10  ]
+					"shape": [   23, 54  ,  13, 65  ,  8, 28  ,  7, 10  ]
 				}  ,
 				{
 					"density": 2, "friction": 0, "bounce": 0, 
 					"filter": { "categoryBits": 1, "maskBits": 65535 },
-					"shape": [   79, 62  ,  81, 65  ,  13, 65  ,  15, 62  ]
+					"shape": [   71, 54  ,  81, 65  ,  13, 65  ,  23, 54  ]
 				}  ,
 				{
 					"density": 2, "friction": 0, "bounce": 0, 
 					"filter": { "categoryBits": 1, "maskBits": 65535 },
-					"shape": [   79, 62  ,  86, 10  ,  85, 28  ,  81, 65  ]
+					"shape": [   71, 54  ,  86, 10  ,  85, 28  ,  81, 65  ]
 				}  
 		]
 		

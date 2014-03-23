@@ -60,15 +60,15 @@ var GameState = {
 		
 		//if (debug) {
 			game.time.advancedTiming = true;
-			fps = game.add.text(2.5, 2.5, '', { font: '24px Verdana', fill: '#FFFFFF', align: 'left' });
+			fps = game.add.text(2.5, 2.5, '', { font: '20px Verdana', fill: '#FFFFFF', align: 'left' });
 			fps.update = function () {
 				fps.setText(game.time.fps+' fps');
 			}
 		//}
 		
-		message = game.add.text(game.world.width*.3, 2.5, '', { font: '24px Verdana', fill: '#FFFFFF', align: 'left' });
+		message = game.add.text(game.world.width*.3, 2.5, '', { font: '20px Verdana', fill: '#FFFFFF', align: 'left' });
 		
-		points = game.add.text(game.world.width-5, 2.5, '0 points', { font: '24px Verdana', fill: '#FFFFFF', align: 'left' });
+		points = game.add.text(game.world.width-5, 2.5, '0 points', { font: '20px Verdana', fill: '#FFFFFF', align: 'left' });
 		points.p = 0;
 		points.update = function () {
 			points.pivot.x = points.width;
@@ -100,10 +100,9 @@ var GameState = {
 		//dots
 		dotCG = game.physics.p2.createCollisionGroup();		
 
-		var rows = 10;
-		var cols = 17;
-		var startX = 0;
-		var startX2 = 29;
+		var rows = 7;
+		var cols = 15;
+		var startX = 6;
 		var startY = 90;
 		var spaceX = 50;
 		var spaceY = 45;
@@ -115,7 +114,7 @@ var GameState = {
 					offsetX = startX;
 				}
 				else {
-					offsetX = spaceX * 0.5;
+					offsetX = spaceX*.5+startX;
 				}
 
 				var dot = dots.create(i*spaceX+offsetX, j*spaceY+startY, colors[game.rnd.integerInRange(0,colors.length-1)]+'Dot');
@@ -154,10 +153,10 @@ var GameState = {
 		});
 
 		//baskets
-		startX = 25;
-		startY = game.world.height-35;
+		startX = 42.5;
+		startY = game.world.height-33;
 		spaceX = 92.5;
-		var basketNumber = 9;
+		var basketNumber = 7;
 
 		basketCG = game.physics.p2.createCollisionGroup();	
 
