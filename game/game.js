@@ -58,13 +58,13 @@ var GameState = {
 	create: function() {
 		press = false;
 		
-		if (debug) {
+		//if (debug) {
 			game.time.advancedTiming = true;
 			fps = game.add.text(2.5, 2.5, '', { font: '24px Verdana', fill: '#FFFFFF', align: 'left' });
 			fps.update = function () {
 				fps.setText(game.time.fps+' fps');
 			}
-		}
+		//}
 		
 		message = game.add.text(game.world.width*.3, 2.5, '', { font: '24px Verdana', fill: '#FFFFFF', align: 'left' });
 		
