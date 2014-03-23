@@ -69,12 +69,13 @@ var GameState = {
 		message = game.add.text(game.world.width*.3, 2.5, '', { font: '20px Verdana', fill: '#FFFFFF', align: 'left' });
 		
 		points = game.add.text(game.world.width-5, 2.5, '0 points', { font: '20px Verdana', fill: '#FFFFFF', align: 'left' });
-		points.p = 0;
-		points.update = function () {
-			points.pivot.x = points.width;
-			points.pivot.y = 0;		
+		points.show = function () {
 			points.setText(points.p+' points');
-		}		
+			points.pivot.x = points.width;
+			points.pivot.y = 0;
+		}
+		points.p = 0;
+		points.show();
 
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true); //Turn on impact events for the world, without this we get no collision callbacks
@@ -144,9 +145,11 @@ var GameState = {
 				switch(otherBody.sprite.key) {
 					default:
 						points.p+=row;
+						points.show();
 					break;
 					case 'redDot':
 						points.p-=row;
+						points.show();
 					break;				
 				}
 			}
@@ -202,6 +205,7 @@ var GameState = {
 					else {
 						points.p=Math.round(parseInt(points.p)*0.5);
 					}
+					points.show();
 				}
 				message.setText("Game Over! Click to restart!");
 				gameover = true;
