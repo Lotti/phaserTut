@@ -20,11 +20,12 @@ var gameHeight = parseInt(document.getElementById("game").offsetHeight);
 
 var game = new Phaser.Game(gameWidth, gameHeight, debug ? Phaser.CANVAS : Phaser.AUTO, 'game');
 
+var prefix= typeof __RESOURCE_URL!=='undefined' ? __RESOURCE_URL : '';
 
 var BootState = {
     preload: function() {
-		game.load.image('background', 'assets/textures/background.jpg');
-        game.load.image('loading', 'assets/textures/loading.png');
+		game.load.image('background', prefix+'res/textures/background.jpg');
+        game.load.image('loading', prefix+'res/textures/loading.png');
     },
     create: function() {
         game.state.start('preload');
@@ -41,14 +42,14 @@ var PreloadState = {
         game.load.setPreloadSprite(loadingBar);
 		
 		
-		game.load.image('circle', 'assets/sprites/cd.png');	
+		game.load.image('circle', prefix+'res/sprites/cd.png');	
 		for(var i in colors) {
-			game.load.image(colors[i]+'Dot', 'assets/sprites/'+colors[i]+'Dot.png');
+			game.load.image(colors[i]+'Dot', prefix+'res/sprites/'+colors[i]+'Dot.png');
 		}
 		for(var i in basketColors) {
-			game.load.image(basketColors[i],'assets/sprites/'+basketColors[i]+'.png');
+			game.load.image(basketColors[i], prefix+'res/sprites/'+basketColors[i]+'.png');
 		}
-		game.load.physics('physicsBasket', 'assets/physics/basket.json');		
+		game.load.physics('physicsBasket', prefix+'res/physics/basket.json');		
 	},
 	create: function() {		
 		game.state.start('game');
@@ -82,7 +83,7 @@ var GameState = {
 
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true); //Turn on impact events for the world, without this we get no collision callbacks
-		game.physics.p2.gravity.y = 200;
+		game.physics.p2.gravity.y = 250;
 		game.physics.p2.defaultRestitution = 0.8;
 		game.physics.p2.defaultFriction = 0.2;
 
@@ -109,7 +110,7 @@ var GameState = {
 		var startX = -1;
 		var startX2 = 29;
 		var startY = 90;
-		var spaceX = 50;
+		var spaceX = 57;
 		var spaceY = 50;
 		dots = game.add.group();
 		dots.name = 'dots';
@@ -128,7 +129,12 @@ var GameState = {
 				dot.anchor.setTo(0.5,0.5);
 				dot.scale.setTo(0.4,0.4);
 				game.physics.p2.enable(dot, debug);
-				dot.body.setCircle(dot.width * .1);
+				//dot.body.setCircle(dot.width * .5);
+				dot.body.clearShapes();
+				dot.body.addCircle(1, 0, -4, 0);
+				dot.body.addCircle(1, 0, 4, 0);
+				dot.body.addCircle(1, 4, 0, 0);
+				dot.body.addCircle(1, -4, 0, 0);
 				dot.body.mass = 100;
 				dot.body.allowSleep = true;
 				dot.body.setCollisionGroup(dotCG);				
@@ -138,7 +144,6 @@ var GameState = {
 		}
 
 		circle.body.collides(dotCG, function(circleBody,otherBody) {
-			//circle.body.angularVelocity = game.rnd.integerInRange(-1,1);
 			var row = otherBody.sprite.row;
 			if (circle.collidedWith.indexOf(row) == -1) {
 				circle.collidedWith.push(row);
