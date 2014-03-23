@@ -20,12 +20,9 @@ var gameHeight = parseInt(document.getElementById("game").offsetHeight);
 
 var game = new Phaser.Game(gameWidth, gameHeight, debug ? Phaser.CANVAS : Phaser.AUTO, 'game');
 
-var prefix= typeof __RESOURCE_URL!=='undefined' ? __RESOURCE_URL : '';
-
 var BootState = {
     preload: function() {
-		game.load.image('background', prefix+'res/textures/background.jpg');
-        game.load.image('loading', prefix+'res/textures/loading.png');
+        game.load.image('loading', 'res/textures/loading.png');
     },
     create: function() {
         game.state.start('preload');
@@ -42,14 +39,14 @@ var PreloadState = {
         game.load.setPreloadSprite(loadingBar);
 		
 		
-		game.load.image('circle', prefix+'res/sprites/cd.png');	
+		game.load.image('circle', 'res/sprites/cd.png');	
 		for(var i in colors) {
-			game.load.image(colors[i]+'Dot', prefix+'res/sprites/'+colors[i]+'Dot.png');
+			game.load.image(colors[i]+'Dot', 'res/sprites/'+colors[i]+'Dot.png');
 		}
 		for(var i in basketColors) {
-			game.load.image(basketColors[i], prefix+'res/sprites/'+basketColors[i]+'.png');
+			game.load.image(basketColors[i], 'res/sprites/'+basketColors[i]+'.png');
 		}
-		game.load.physics('physicsBasket', prefix+'res/physics/basket.json');		
+		game.load.physics('physicsBasket', 'res/physics/basket.json');		
 	},
 	create: function() {		
 		game.state.start('game');
@@ -61,19 +58,17 @@ var GameState = {
 	create: function() {
 		press = false;
 		
-		game.add.sprite(0, 0, 'background');
-		
 		if (debug) {
 			game.time.advancedTiming = true;
-			fps = game.add.text(2.5, 2.5, '', { font: '30px Verdana', fill: '#FFFFFF', align: 'left' });
+			fps = game.add.text(2.5, 2.5, '', { font: '24px Verdana', fill: '#FFFFFF', align: 'left' });
 			fps.update = function () {
 				fps.setText(game.time.fps+' fps');
 			}
 		}
 		
-		message = game.add.text(game.world.width*.3, 2.5, '', { font: '30px Verdana', fill: '#FFFFFF', align: 'left' });
+		message = game.add.text(game.world.width*.3, 2.5, '', { font: '24px Verdana', fill: '#FFFFFF', align: 'left' });
 		
-		points = game.add.text(game.world.width-5, 2.5, '0 points', { font: '30px Verdana', fill: '#FFFFFF', align: 'left' });
+		points = game.add.text(game.world.width-5, 2.5, '0 points', { font: '24px Verdana', fill: '#FFFFFF', align: 'left' });
 		points.p = 0;
 		points.update = function () {
 			points.pivot.x = points.width;
@@ -94,10 +89,10 @@ var GameState = {
 		circle.collidedWith = [];
 		circle.name = 'circle';
 		circle.anchor.setTo(0.5,0.5);
-		circle.scale.setTo(0.4,0.4);
+		circle.scale.setTo(0.33,0.33);
 		game.physics.p2.enable(circle, debug);
 		circle.body.setCircle(circle.width * .5);
-		circle.body.mass = 10;
+		circle.body.mass = 1;
 		circle.body.setCollisionGroup(circleCG);
 		circle.body.data.motionState = 2; //circle.body.static = true;
 		circle.body.collideWorldBounds = true;
@@ -106,12 +101,12 @@ var GameState = {
 		dotCG = game.physics.p2.createCollisionGroup();		
 
 		var rows = 10;
-		var cols = 21;
-		var startX = -1;
+		var cols = 17;
+		var startX = 0;
 		var startX2 = 29;
 		var startY = 90;
-		var spaceX = 57;
-		var spaceY = 50;
+		var spaceX = 50;
+		var spaceY = 45;
 		dots = game.add.group();
 		dots.name = 'dots';
 		for(var i=0; i<cols; i++) {
@@ -159,10 +154,10 @@ var GameState = {
 		});
 
 		//baskets
-		startX = 50;
+		startX = 25;
 		startY = game.world.height-35;
 		spaceX = 92.5;
-		var basketNumber = 11;
+		var basketNumber = 9;
 
 		basketCG = game.physics.p2.createCollisionGroup();	
 
