@@ -124,12 +124,15 @@ var GameState = {
 				dot.anchor.setTo(0.5,0.5);
 				dot.scale.setTo(0.4,0.4);
 				game.physics.p2.enable(dot, debug);
-				//dot.body.setCircle(dot.width * .5);
+				dot.body.setCircle(dot.width * .5);
+				
+				/*
 				dot.body.clearShapes();
 				dot.body.addCircle(1, 0, -4, 0);
 				dot.body.addCircle(1, 0, 4, 0);
 				dot.body.addCircle(1, 4, 0, 0);
 				dot.body.addCircle(1, -4, 0, 0);
+				*/
 				dot.body.mass = 100;
 				dot.body.allowSleep = true;
 				dot.body.setCollisionGroup(dotCG);				
