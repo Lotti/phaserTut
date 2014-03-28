@@ -134,7 +134,6 @@ var GameState = {
 				dot.body.setCollisionGroup(dotCG);				
 				dot.body.data.motionState = Phaser.Physics.P2.Body.STATIC;
 				dot.body.collides(circleCG); //now it works!
-				dot.body.removeFromWorld();
 			}
 		}
 
@@ -176,7 +175,6 @@ var GameState = {
 			basket.body.setCollisionGroup(basketCG);
 			basket.body.data.motionState = Phaser.Physics.P2.Body.STATIC;
 			basket.body.collides(circleCG);
-			basket.body.removeFromWorld();
 		}
 
 		circle.body.collides(basketCG, function(circleBody, otherBody) {
