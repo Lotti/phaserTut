@@ -69,13 +69,12 @@ var GameState = {
 		message = game.add.text(game.world.width*.3, 2.5, '', { font: '20px Verdana', fill: '#FFFFFF', align: 'left' });
 		
 		points = game.add.text(game.world.width-5, 2.5, '0 points', { font: '20px Verdana', fill: '#FFFFFF', align: 'left' });
-		points.show = function () {
+		points.update = function () {
 			points.setText(points.p+' points');
 			points.pivot.x = points.width;
 			points.pivot.y = 0;
 		}
 		points.p = 0;
-		points.show();
 
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true); //Turn on impact events for the world, without this we get no collision callbacks
@@ -95,7 +94,7 @@ var GameState = {
 		circle.body.setCircle(circle.width * .5);
 		circle.body.mass = 1;
 		circle.body.setCollisionGroup(circleCG);
-		circle.body.data.motionState = 2; //circle.body.static = true;
+		circle.body.motionState = Phaser.Physics.P2.Body.STATIC;
 		circle.body.collideWorldBounds = true;
 		
 		//dots
@@ -133,8 +132,9 @@ var GameState = {
 				dot.body.mass = 100;
 				dot.body.allowSleep = true;
 				dot.body.setCollisionGroup(dotCG);				
-				dot.body.data.motionState = 2; //dot.body.static = true;
+				dot.body.data.motionState = Phaser.Physics.P2.Body.STATIC;
 				dot.body.collides(circleCG); //now it works!
+				dot.body.removeFromWorld();
 			}
 		}
 
@@ -145,11 +145,9 @@ var GameState = {
 				switch(otherBody.sprite.key) {
 					default:
 						points.p+=row;
-						points.show();
 					break;
 					case 'redDot':
 						points.p-=row;
-						points.show();
 					break;				
 				}
 			}
@@ -176,8 +174,9 @@ var GameState = {
 			basket.body.mass = 100;
 			basket.body.allowSleep = true;
 			basket.body.setCollisionGroup(basketCG);
-			basket.body.data.motionState = 2; //basket.body.static = true;
+			basket.body.data.motionState = Phaser.Physics.P2.Body.STATIC;
 			basket.body.collides(circleCG);
+			basket.body.removeFromWorld();
 		}
 
 		circle.body.collides(basketCG, function(circleBody, otherBody) {
@@ -205,7 +204,6 @@ var GameState = {
 					else {
 						points.p=Math.round(parseInt(points.p)*0.5);
 					}
-					points.show();
 				}
 				message.setText("Game Over! Click to restart!");
 				gameover = true;
@@ -226,7 +224,7 @@ var GameState = {
 			}
 		}
 		else {
-			if (circle.body.data.motionState == 2) {
+			if (circle.body.motionState == Phaser.Physics.P2.Body.STATIC) {
 				if (game.input.activePointer.isUp) {
 					circlePressed = false;
 					press = false;
@@ -243,14 +241,14 @@ var GameState = {
 					press = true;
 
 					if (circlePressed) {
-						circle.body.data.motionState = 1;
+						circle.body.motionState = Phaser.Physics.P2.Body.DYNAMIC;
 					}
 					else {
 						circle.body.x = game.input.activePointer.worldX;
 					}
 				}
 				else if (game.input.keyboard.isDown(Phaser.Keyboard.CONTROL)) {
-					circle.body.data.motionState = 1;
+					circle.body.motionState = Phaser.Physics.P2.Body.DYNAMIC;
 				}
 				else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
 					circle.body.x-= speed;
@@ -259,6 +257,7 @@ var GameState = {
 					circle.body.x+= speed;
 				}
 
+				//border checks 
 				if (circle.body.x < 0 + circle.width * 0.5) {
 					circle.body.x = circle.width * 0.5;
 				} 
@@ -277,12 +276,12 @@ var GameState = {
 		circle.collidedWith = [];
 		circle.body.x = game.world.width*.5-25;
 		circle.body.y = 25;
-		circle.body.motionState  = 2;
+		circle.body.motionState  = Phaser.Physics.P2.Body.STATIC;
 
 		points.p = 0;
 
 		message.setText("");
-	}	
+	}
 }
 
 
