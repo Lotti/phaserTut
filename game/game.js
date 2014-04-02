@@ -15,10 +15,11 @@ var started = false;
 var press = false;
 var gameover = false;
 
-var gameWidth = parseInt(document.getElementById("game").offsetWidth);
-var gameHeight = parseInt(document.getElementById("game").offsetHeight);
+var gameDiv = 'game';
+var gameWidth = parseInt(document.getElementById(gameDiv).offsetWidth);
+var gameHeight = parseInt(document.getElementById(gameDiv).offsetHeight);
 
-var game = new Phaser.Game(gameWidth, gameHeight, debug ? Phaser.CANVAS : Phaser.AUTO, 'game');
+var game = new Phaser.Game(gameWidth, gameHeight, debug ? Phaser.CANVAS : Phaser.AUTO, gameDiv, null, false, false);
 
 var BootState = {
     preload: function() {
