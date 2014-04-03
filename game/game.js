@@ -1,7 +1,7 @@
 var debug = false;
 var gameDiv = "game";
-var basketColors = ['basket','basketgreen','basketred'];
-var colors = ['green','red'/*,'yellow','blue','purple','grey'*/];
+var basketColors = [0xFFFFFF,0x1CFF1C,0XFF1C1C];
+var colors = [0x1CFF1C,0XFF1C1C];
 var dots;
 var dotCG;
 var circle;
@@ -40,13 +40,9 @@ var PreloadState = {
         game.load.setPreloadSprite(loadingBar);
 		
 		
-		game.load.image('circle', 'res/sprites/cd.png');	
-		for(var i in colors) {
-			game.load.image(colors[i]+'Dot', 'res/sprites/'+colors[i]+'Dot.png');
-		}
-		for(var i in basketColors) {
-			game.load.image(basketColors[i], 'res/sprites/'+basketColors[i]+'.png');
-		}
+		game.load.image('circle', 'res/sprites/cd.png');
+        game.load.image('basket', 'res/sprites/basket.png');
+        game.load.image('dot', 'res/sprites/dot.png');
 		game.load.physics('physicsBasket', 'res/physics/basket.json');		
 	},
 	create: function() {		
@@ -118,9 +114,10 @@ var GameState = {
 					offsetX = spaceX*.5+startX;
 				}
 
-				var dot = dots.create(i*spaceX+offsetX, j*spaceY+startY, colors[game.rnd.integerInRange(0,colors.length-1)]+'Dot');
+				var dot = dots.create(i*spaceX+offsetX, j*spaceY+startY, 'dot');
+                dot.name = ((j+1)*i)+'dot';
 				dot.row = j+1; //ad-hoc variable
-				dot.name = ((j+1)*i)+'dot';
+                dot.tint = colors[game.rnd.integerInRange(0,colors.length-1)];
 				dot.anchor.setTo(0.5,0.5);
 				dot.scale.setTo(0.4,0.4);
 				game.physics.p2.enable(dot, debug);
@@ -164,8 +161,9 @@ var GameState = {
 		baskets = game.add.group();
 		baskets.name = 'baskets';	
 		for(var i=0; i<basketNumber; i++) {
-			var basket = baskets.create(i*spaceX+startX, startY, basketColors[game.rnd.integerInRange(0,basketColors.length-1)]);
-			basket.name = (i+1)+'basket';
+			var basket = baskets.create(i*spaceX+startX, startY, 'basket');
+            basket.name = (i+1)+'basket';
+            basket.tint = basketColors[game.rnd.integerInRange(0,basketColors.length-1)];
 			basket.anchor.setTo(0.5,1.0);
 			basket.scale.setTo(0.75,0.75);
 			game.physics.p2.enable(basket, debug);
