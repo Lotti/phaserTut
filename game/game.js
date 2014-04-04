@@ -39,7 +39,6 @@ var PreloadState = {
         loadingBar.y = game.world.centerY - loadingBar.height / 2;
         game.load.setPreloadSprite(loadingBar);
 		
-		
 		game.load.image('circle', 'res/sprites/cd.png');
         game.load.image('basket', 'res/sprites/basket.png');
         game.load.image('dot', 'res/sprites/dot.png');
