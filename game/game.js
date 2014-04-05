@@ -23,7 +23,7 @@ var game = new Phaser.Game(gameWidth, gameHeight, debug ? Phaser.CANVAS : Phaser
 
 var BootState = {
     preload: function() {
-        game.load.image('loading', 'res/textures/loading.png');
+        game.load.image('loadingBar', 'res/textures/loading.png');
     },
     create: function() {
         game.state.start('preload');
@@ -31,9 +31,9 @@ var BootState = {
 }
 
 
-var PreloadState = {
+var LoadingState = {
     preload: function() {
-        loadingBar = game.add.sprite(0, 0, 'loading');
+        loadingBar = game.add.sprite(0, 0, 'loadingBar');
         // Center the preload bar
         loadingBar.x = game.world.centerX - loadingBar.width / 2;
         loadingBar.y = game.world.centerY - loadingBar.height / 2;
@@ -283,7 +283,7 @@ var GameState = {
 
 
 game.state.add('boot', BootState, true);
-game.state.add('preload', PreloadState, false);
+game.state.add('preload', LoadingState, false);
 game.state.add('game', GameState, false);
 
 window.onkeypress = function(e) {
