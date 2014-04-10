@@ -263,8 +263,6 @@ var GameState = {
 			}
 		}
 	},
-	render: function() {
-	},	
 	restart: function() {
 		gameover = false;
 		press = false;
